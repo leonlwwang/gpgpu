@@ -1,1 +1,1 @@
-[`general purpose gpu practice exercises`](https://webgl2fundamentals.org/webgl/lessons/webgl-gpgpu.html)
+[`gpgpu & transform feedback side quests`](https://webgl2fundamentals.org/webgl/lessons/webgl-gpgpu.html)
