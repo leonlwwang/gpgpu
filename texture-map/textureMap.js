@@ -1,8 +1,9 @@
 import { initShaders } from "../common/gl-init"
 
 export const multArrByTextureMap = async (canvas, arr) => {
-  const dstWidth = 3
-  const dstHeight = 2
+  const { width, height } = getDims(arr.length)
+  const dstWidth = width
+  const dstHeight = height
 
   canvas.width = dstWidth
   canvas.height = dstHeight
@@ -39,8 +40,8 @@ export const multArrByTextureMap = async (canvas, arr) => {
     0,
   )
 
-  const srcWidth = 3
-  const srcHeight = 2
+  const srcWidth = width
+  const srcHeight = height
   const tex = gl.createTexture()
   gl.bindTexture(gl.TEXTURE_2D, tex)
   gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
@@ -72,6 +73,14 @@ export const multArrByTextureMap = async (canvas, arr) => {
   for (let i = 0; i < dstWidth * dstHeight; i++) {
     result.push(results[i * 4])
   }
-  console.log(result)
   return result
+}
+
+const getDims = (nElements) => {
+  const factors = []
+  for (let i = 0; i < Math.sqrt(nElements); i++) {
+    nElements % i === 0 && factors.push([i, nElements / i])
+  }
+  factors.sort((a, b) => Math.abs(a[0] - a[1]) - Math.abs(b[0] - b[1]))
+  return { width: factors[0][0], height: factors[0][1] }
 }
