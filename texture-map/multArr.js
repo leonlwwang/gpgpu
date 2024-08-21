@@ -1,4 +1,4 @@
-import { initShaders } from "../common/gl-init"
+import { initShaders } from '../common/gl-init'
 
 export const multArrByTextureMap = async (canvas, arr) => {
   const { width, height } = getDims(arr.length)
@@ -9,8 +9,8 @@ export const multArrByTextureMap = async (canvas, arr) => {
   canvas.height = dstHeight
 
   const gl = canvas.getContext('webgl2')
-  const vs = 'texture-map/shaders/vertex.glsl'
-  const fs = 'texture-map/shaders/fragment.glsl'
+  const vs = 'texture-map/multArr/vertex.glsl'
+  const fs = 'texture-map/multArr/fragment.glsl'
   const program = await initShaders(gl, vs, fs)
 
   const positionLoc = gl.getAttribLocation(program, 'position')
