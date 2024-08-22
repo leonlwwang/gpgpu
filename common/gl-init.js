@@ -1,3 +1,4 @@
+/* creates a frag and a vertex shader binded to a program */
 export const initShaders = async (gl, vs, fs) => {
   const vertexShader = await initShader(gl, gl.VERTEX_SHADER, vs)
   const fragmentShader = await initShader(gl, gl.FRAGMENT_SHADER, fs)
@@ -8,13 +9,13 @@ export const initShaders = async (gl, vs, fs) => {
   gl.linkProgram(shaderProgram)
 
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    console.error(`Failed to link program: ${gl.getProgramInfoLog(shaderProgram)}`)
-    return null
+    throw new Error(gl.getProgramParameter(shaderProgram))
   }
 
   return shaderProgram
 }
 
+/* creates an individual frag or vertex shader */
 export const initShader = async (gl, type, path) => {
   const source = await fetch(path).then((response) => response.text())
   const shader = gl.createShader(type)
