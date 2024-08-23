@@ -1,4 +1,5 @@
 import './style.css'
+import { addSubMul } from './texture-map-tf/addSubMul'
 import { addTwosByTextureMap } from './texture-map/addTwos'
 import { multArrByTextureMap } from './texture-map/multArr'
 
@@ -18,3 +19,5 @@ await addTwosByTextureMap(canvasB).then((res) => console.log(res))
 /* part (2): add, sub, mul 2 arrays w/ tf + fs */
 const canvasC = document.createElement('canvas')
 document.body.appendChild(canvasC)
+
+await addSubMul(canvasC).then((res) => console.log(res))

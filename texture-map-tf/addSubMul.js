@@ -1,10 +1,12 @@
 import { initShader } from '../common/gl-init'
 
-export const addSubMul = async () => {
+export const addSubMul = async (canvas) => {
+  const gl = canvas.getContext('webgl2')
+
   const vsPath = 'texture-map-tf/addSubMul/vertex.glsl'
   const fsPath = 'texture-map-tf/addSubMul/fragment.glsl'
-  const vs = initShader(gl, gl.VERTEX_SHADER, vsPath)
-  const fs = initShader(gl, gl.FRAGMENT_SHADER, fsPath)
+  const vs = await initShader(gl, gl.VERTEX_SHADER, vsPath)
+  const fs = await initShader(gl, gl.FRAGMENT_SHADER, fsPath)
 
   const program = gl.createProgram()
   gl.attachShader(program, vs)
@@ -46,11 +48,17 @@ export const addSubMul = async () => {
   gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 1, diff)
   gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 2, mul)
 
+  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null)
+
+  /* must unbind buffers from non-tf targets before doing tf */
+  gl.bindBuffer(gl.ARRAY_BUFFER, null)
+
   gl.useProgram(program)
   gl.bindVertexArray(vao)
 
   gl.enable(gl.RASTERIZER_DISCARD)
 
+  /* execute tf */
   gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf)
   gl.beginTransformFeedback(gl.POINTS)
   gl.drawArrays(gl.POINTS, 0, a.length)
@@ -59,29 +67,33 @@ export const addSubMul = async () => {
 
   gl.disable(gl.RASTERIZER_DISCARD)
 
-  console.log(`a: ${a}`)
-  console.log(`b: ${b}`)
+  let sb = String()
+  sb += `a: ${a}\n`
+  sb += `b: ${b}\n`
 
-  const printResult = (gl, buffer, label) => {
+  const loadResult = (gl, buffer, label) => {
     const result = new Float32Array(a.length)
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+    /* accesses buffers that tf wrote to */
     gl.getBufferSubData(
       gl.ARRAY_BUFFER,
       0,
       result,
     )
-    console.log(`${label}: ${result}`)
+    sb += `${label}: ${result}\n`
   }
 
-  printResult(gl, sum, 'a + b')
-  printResult(gl, diff, 'a - b')
-  printResult(gl, mul, 'a * b')
+  loadResult(gl, sum, 'a + b')
+  loadResult(gl, diff, 'a - b')
+  loadResult(gl, mul, 'a * b')
+
+  return sb
 }
 
 const makeBuffer = (gl, sizeOrData) => {
   const buf = gl.createBuffer()
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-  gl.bufferdata(gl.ARRAY_BUFFER, sizeOrData, gl.STATIC_DRAW)
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf)
+  gl.bufferData(gl.ARRAY_BUFFER, sizeOrData, gl.STATIC_DRAW)
   return buf
 }
 
