@@ -1,4 +1,5 @@
 import './style.css'
+import { particles } from './particles/particles'
 import { addSubMul } from './texture-map-tf/addSubMul'
 import { addTwosByTextureMap } from './texture-map/addTwos'
 import { multArrByTextureMap } from './texture-map/multArr'
@@ -21,3 +22,9 @@ const canvasC = document.createElement('canvas')
 document.body.appendChild(canvasC)
 
 await addSubMul(canvasC).then((res) => console.log(res))
+
+/* part (3): particule simulation with tf */
+const canvasD = document.createElement('canvas')
+document.body.appendChild(canvasD)
+
+await particles(canvasD).then((res) => console.log(res))
