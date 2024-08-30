@@ -1,11 +1,20 @@
-/* creates a frag and a vertex shader binded to a program */
-export const initShaders = async (gl, vs, fs) => {
+/* creates a frag and a vertex shader binded to a program with options for tf */
+export const initShaders = async (gl, vs, fs, tf = []) => {
   const vertexShader = await initShader(gl, gl.VERTEX_SHADER, vs)
   const fragmentShader = await initShader(gl, gl.FRAGMENT_SHADER, fs)
 
   const shaderProgram = gl.createProgram()
   gl.attachShader(shaderProgram, vertexShader)
   gl.attachShader(shaderProgram, fragmentShader)
+
+  if (tf.length > 0) {
+    gl.transformFeedbackVaryings(
+      shaderProgram,
+      tf,
+      gl.SEPARATE_ATTRIBS,
+    )
+  }
+
   gl.linkProgram(shaderProgram)
 
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
