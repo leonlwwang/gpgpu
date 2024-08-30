@@ -36,11 +36,30 @@ export const initShader = async (gl, type, path) => {
   return shader
 }
 
-/* creats a gl buffer to hold data */
-export const makeBuffer = (gl, sizeOrData, usage = null) => {
+/* creates a gl buffer to hold data */
+export const makeBufferAndVao = (gl, sizeOrData, usage = null) => {
   const drawMode = usage ?? gl.STATIC_DRAW
   const buf = gl.createBuffer()
   gl.bindBuffer(gl.ARRAY_BUFFER, buf)
   gl.bufferData(gl.ARRAY_BUFFER, sizeOrData, drawMode)
   return buf
+}
+
+/* makes a vao based on buffer and location */
+export const makeVao = (gl, bufsAndLocs) => {
+  const vao = gl.createVertexArray()
+  gl.bindVertexArray(vao)
+  for (const [buf, loc] of bufsAndLocs) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf)
+    gl.enableVertexAttribArray(loc)
+    gl.vertexAttribPointer(
+      loc,
+      2,
+      gl.FLOAT,
+      false,
+      0,
+      0,
+    )
+  }
+  return vao
 }

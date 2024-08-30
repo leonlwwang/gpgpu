@@ -1,4 +1,4 @@
-import { initShaders, makeBuffer } from "../common/gl-init"
+import { initShaders, makeBuffer, makeVao } from "../common/gl-init"
 
 export const particles = async (canvas) => {
   canvas.width = 300
@@ -35,9 +35,23 @@ export const particles = async (canvas) => {
 
   const position1Buf = makeBuffer(gl, points, gl.DYNAMIC_DRAW)
   const position2Buf = makeBuffer(gl, points, gl.DYNAMIC_DRAW)
-  const velocityBuf = makeBuffer(gl, velocities, gl.STATIC_DRAW)
+  const velocityBuf = makeBuffer(gl, velocities)
 
-  
+  const position1Vao = makeVao(gl, [
+    [position1Buf, movementProgramLocs.inPosition],
+    [velocityBuf, movementProgramLocs.inVelocity],
+  ])
+  const position2Vao = makeVao(gl, [
+    [position2Buf, movementProgramLocs.inPosition],
+    [velocityBuf, movementProgramLocs.inVelocity],
+  ])
+
+  const draw1Vao = makeVao(gl, [
+    [position1Buf, renderProgramLocs.inPosition],
+  ])
+  const draw2Vao = makeVao(gl, [
+    [position2Buf, renderProgramLocs.inPosition],
+  ])
 }
 
 const randomPointsAndVelocities = (n, canvas) => {
