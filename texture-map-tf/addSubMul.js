@@ -1,4 +1,4 @@
-import { initShader } from '../common/gl-init'
+import { initShader, makeBuffer } from '../common/gl-init'
 
 export const addSubMul = async (canvas) => {
   const gl = canvas.getContext('webgl2')
@@ -88,13 +88,6 @@ export const addSubMul = async (canvas) => {
   loadResult(gl, mul, 'a * b')
 
   return sb
-}
-
-const makeBuffer = (gl, sizeOrData) => {
-  const buf = gl.createBuffer()
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf)
-  gl.bufferData(gl.ARRAY_BUFFER, sizeOrData, gl.STATIC_DRAW)
-  return buf
 }
 
 const makeBufferAndSetAttrib = (gl, data, loc) => {

@@ -1,4 +1,4 @@
-import { initShaders } from "../common/gl-init"
+import { initShaders, makeBuffer } from "../common/gl-init"
 
 export const particles = async (canvas) => {
   canvas.width = 300
@@ -32,6 +32,10 @@ export const particles = async (canvas) => {
 
   const nParticles = 200
   const { points, velocities } = randomPointsAndVelocities(nParticles, canvas)
+
+  const position1Buf = makeBuffer(gl, points, gl.DYNAMIC_DRAW)
+  const position2Buf = makeBuffer(gl, points, gl.DYNAMIC_DRAW)
+  const velocityBuf = makeBuffer(gl, velocities, gl.STATIC_DRAW)
 
   
 }
