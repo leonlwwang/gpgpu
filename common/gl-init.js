@@ -37,7 +37,7 @@ export const initShader = async (gl, type, path) => {
 }
 
 /* creates a gl buffer to hold data */
-export const makeBufferAndVao = (gl, sizeOrData, usage = null) => {
+export const makeBuffer = (gl, sizeOrData, usage = null) => {
   const drawMode = usage ?? gl.STATIC_DRAW
   const buf = gl.createBuffer()
   gl.bindBuffer(gl.ARRAY_BUFFER, buf)
@@ -62,4 +62,12 @@ export const makeVao = (gl, bufsAndLocs) => {
     )
   }
   return vao
+}
+
+/* creates a transform feedback from a buffer */
+export const makeTf = (gl, buffer) => {
+  const tf = gl.createTransformFeedback()
+  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf)
+  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, buffer)
+  return tf
 }
