@@ -1,8 +1,8 @@
 import { initShaders, makeBuffer, makeTf, makeVao } from "../common/gl-init"
 
 export const particles = async (canvas) => {
-  canvas.width = 300
-  canvas.height = 300
+  canvas.width = 600
+  canvas.height = 600
 
   const gl = canvas.getContext('webgl2')
 
