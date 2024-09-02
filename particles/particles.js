@@ -10,7 +10,7 @@ export const particles = async (canvas) => {
     gl,
     'particles/particles/vs-movement.glsl',
     'particles/particles/fs-movement.glsl',
-    ['outPosition']
+    ['outPosition', 'outVelocity']
   )
   const renderProgram = await initShaders(
     gl,
@@ -35,15 +35,16 @@ export const particles = async (canvas) => {
 
   const position1Buf = makeBuffer(gl, points, gl.DYNAMIC_DRAW)
   const position2Buf = makeBuffer(gl, points, gl.DYNAMIC_DRAW)
-  const velocityBuf = makeBuffer(gl, velocities)
+  const velocity1Buf = makeBuffer(gl, velocities, gl.DYNAMIC_DRAW)
+  const velocity2Buf = makeBuffer(gl, velocities, gl.DYNAMIC_DRAW)
 
   const position1Vao = makeVao(gl, [
     [position1Buf, movementProgramLocs.inPosition],
-    [velocityBuf, movementProgramLocs.inVelocity],
+    [velocity1Buf, movementProgramLocs.inVelocity],
   ])
   const position2Vao = makeVao(gl, [  
     [position2Buf, movementProgramLocs.inPosition],
-    [velocityBuf, movementProgramLocs.inVelocity],
+    [velocity2Buf, movementProgramLocs.inVelocity],
   ])
 
   const draw1Vao = makeVao(gl, [
@@ -62,12 +63,18 @@ export const particles = async (canvas) => {
 
   let curr = {
     points: position1Vao,
-    tf: tf2,
+    velocities: velocity1Buf,
+    // tf: tf2,
+    positionBuf: position2Buf,
+    velocityBuf: velocity2Buf,
     render: draw2Vao,
   }
   let next = {
     points: position2Vao,
-    tf: tf1,
+    velocities: velocity2Buf,
+    // tf: tf1,
+    positionBuf: position1Buf,
+    velocityBuf: velocity1Buf,
     render: draw1Vao,
   }
 
@@ -89,11 +96,17 @@ export const particles = async (canvas) => {
     // stop drawing on screen before executing tf
     gl.enable(gl.RASTERIZER_DISCARD)
 
-    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, curr.tf)
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, curr.positionBuf)
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 1, curr.velocityBuf)
+
+    // gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, curr.tf)
     gl.beginTransformFeedback(gl.POINTS)
     gl.drawArrays(gl.POINTS, 0, nParticles)
     gl.endTransformFeedback()
-    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null)
+    // gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null)
+
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, null)
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 1, null)
 
     gl.disable(gl.RASTERIZER_DISCARD)
 
