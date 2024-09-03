@@ -1,4 +1,4 @@
-import { initShaders, makeBuffer, makeTf, makeVao } from "../common/gl-init"
+import { initShaders, makeBuffer, makeTexture, makeTf, makeVao } from "../common/gl-init"
 
 export const particles = async (canvas) => {
   canvas.width = 600
@@ -18,9 +18,16 @@ export const particles = async (canvas) => {
     'particles/particles/fs-render.glsl',
   )
 
+  const nParticles = 200
+  const { points, velocities } = randomPointsAndVelocities(nParticles, canvas)
+
+  // prepare initial point data as texture
+  makeTexture(gl, points, nParticles)
+
   const movementProgramLocs = {
     inPosition: gl.getAttribLocation(movementProgram, 'inPosition'),
     inVelocity: gl.getAttribLocation(movementProgram, 'inVelocity'),
+    pointIndex: gl.getAttribLocation(movementProgram, 'pointIndex'),
     canvasDimensions: gl.getUniformLocation(movementProgram, 'canvasDimensions'),
     deltaTime: gl.getUniformLocation(movementProgram, 'deltaTime'),
   }
@@ -29,9 +36,6 @@ export const particles = async (canvas) => {
     inPosition: gl.getAttribLocation(renderProgram, 'inPosition'),
     matrix: gl.getUniformLocation(renderProgram, 'matrix'),
   }
-
-  const nParticles = 200
-  const { points, velocities } = randomPointsAndVelocities(nParticles, canvas)
 
   const position1Buf = makeBuffer(gl, points, gl.DYNAMIC_DRAW)
   const position2Buf = makeBuffer(gl, points, gl.DYNAMIC_DRAW)

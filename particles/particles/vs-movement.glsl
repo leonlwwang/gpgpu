@@ -2,9 +2,11 @@
 
 in vec2 inPosition;
 in vec2 inVelocity;
+in uint pointIndex;
 
 uniform float deltaTime;
 uniform vec2 canvasDimensions;
+uniform sampler2D allPoints;
 
 out vec2 outPosition;
 out vec2 outVelocity;

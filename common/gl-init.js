@@ -71,3 +71,41 @@ export const makeTf = (gl, buffer) => {
   gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, buffer)
   return tf
 }
+
+/* generates a 2d texture from a float array */
+export const makeTexture = (
+  gl,
+  data,
+  numComponents,
+  internalFormat = null,
+  format = null,
+  type = null
+) => {
+  const numElements = data.length / numComponents
+
+  // compute most efficient matrix size to contain the component data
+  const width = Math.ceil(Math.sqrt(numElements))
+  const height = Math.ceil(numElements / width)
+
+  const container = new Float32Array(width * height * numComponents)
+  container.set(data)
+
+  const tex = gl.createTexture()
+  gl.bindTexture(gl.TEXTURE_2D, tex)
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    internalFormat ?? gl.RG32F,
+    width,
+    height,
+    0,
+    format ?? gl.RG,
+    type ?? gl.FLOAT,
+    container,
+  )
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+  return tex
+}
