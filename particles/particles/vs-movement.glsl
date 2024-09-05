@@ -22,8 +22,11 @@ vec4 getPoint(sampler2D tex, ivec2 dims, int i) {
   return texelFetch(tex, ivec2(x, y), 0);
 }
 
-bool collides(vec2 point) {
-  // check point collision
+bool collides(vec2 iterPoint, vec2 currPoint) {
+  if (iterPoint.xy == currPoint.xy) {
+    return true;
+  }
+  return false;
 }
 
 void main() {
@@ -43,11 +46,11 @@ void main() {
     for every texel in allPoints, fetch the truncated vec2 (x, y)
     then check if the point collided with the current point
   */
-  ivec2 texDimensions = textureSize(pointsTex, 0)
+  ivec2 texDimensions = textureSize(pointsTex, 0);
   for (int i = 0; i < texLength; ++i) {
     if (i != pointIndex) {
       vec2 point = getPoint(pointsTex, texDimensions, i * 2).xy;
-      if (collides(point)) {
+      if (collides(point, newPosition)) {
         newVelocity.xy = inVelocity.xy * -1.0;
         newPosition.xy = inPosition.xy + newVelocity.xy * deltaTime;
       }
