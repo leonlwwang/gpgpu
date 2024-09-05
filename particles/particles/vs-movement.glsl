@@ -2,17 +2,26 @@
 
 in vec2 inPosition;
 in vec2 inVelocity;
-in uint pointIndex;
+in int pointIndex;
 
 uniform float deltaTime;
 uniform vec2 canvasDimensions;
-uniform sampler2D allPoints;
+uniform sampler2D pointsTex;
+uniform int texLength;
 
 out vec2 outPosition;
 out vec2 outVelocity;
 
 vec2 euclidianModulo(vec2 n, vec2 m) {
   return mod(mod(n, m) + m, m);
+}
+
+vec4 getPoint(sampler2D tex, ivec2 dims, int i) {
+  // retrieve point w/ texelFetch
+}
+
+bool collides(vec2 point) {
+  // check point collision
 }
 
 void main() {
@@ -26,6 +35,21 @@ void main() {
   if (newPosition.y < 0.0 || newPosition.y > canvasDimensions.y) {
     newVelocity.y = inVelocity.y * -1.0;
     newPosition.y = inPosition.y + newVelocity.y * deltaTime;
+  }
+
+  /* 
+    for every texel in allPoints, fetch the truncated vec2 (x, y)
+    then check if the point collided with the current point
+  */
+  ivec2 texDimensions = textureSize(pointsTex, 0)
+  for (int i = 0; i < texLength; ++i) {
+    if (i != pointIndex) {
+      vec2 point = getPoint(pointsTex, texDimensions, i * 2).xy;
+      if (collides(point)) {
+        newVelocity.xy = inVelocity.xy * -1.0;
+        newPosition.xy = inPosition.xy + newVelocity.xy * deltaTime;
+      }
+    }
   }
     
   outPosition = euclidianModulo(newPosition, canvasDimensions);
