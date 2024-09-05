@@ -17,7 +17,9 @@ vec2 euclidianModulo(vec2 n, vec2 m) {
 }
 
 vec4 getPoint(sampler2D tex, ivec2 dims, int i) {
-  // retrieve point w/ texelFetch
+  int y = i / dims.x;
+  int x = i % dims.x;
+  return texelFetch(tex, ivec2(x, y), 0);
 }
 
 bool collides(vec2 point) {
