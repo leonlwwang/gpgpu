@@ -21,15 +21,15 @@ export const particles = async (canvas) => {
   const nParticles = 200
   const { points, velocities } = randomPointsAndVelocities(nParticles, canvas)
 
-  // prepare initial point data as texture
-  makeTexture(gl, points, nParticles)
+  // prepare texture for collision checking
+  makeTexture(gl, points, 2)
 
   const movementProgramLocs = {
     inPosition: gl.getAttribLocation(movementProgram, 'inPosition'),
     inVelocity: gl.getAttribLocation(movementProgram, 'inVelocity'),
     pointIndex: gl.getAttribLocation(movementProgram, 'pointIndex'),
-    canvasDimensions: gl.getUniformLocation(movementProgram, 'canvasDimensions'),
     deltaTime: gl.getUniformLocation(movementProgram, 'deltaTime'),
+    canvasDimensions: gl.getUniformLocation(movementProgram, 'canvasDimensions'),
   }
 
   const renderProgramLocs = {
@@ -60,6 +60,13 @@ export const particles = async (canvas) => {
 
   const tf1 = makeTf(gl, position1Buf)
   const tf2 = makeTf(gl, position2Buf)
+
+  // texture index tracker to pass into vs
+  const indices = new Int32Array(Array.from({ length: nParticles }, (_, i) => i))
+  const indicesBuf = makeBuffer(gl, indices)
+  const indicesVao = makeVao(gl, [
+    [indicesBuf, movementProgramLocs.pointIndex],
+  ], true)
 
   // remember to unbind everything before executing tf
   gl.bindBuffer(gl.ARRAY_BUFFER, null)

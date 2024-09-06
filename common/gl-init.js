@@ -46,15 +46,27 @@ export const makeBuffer = (gl, sizeOrData, usage = null) => {
 }
 
 /* makes a vao based on buffer and location */
-export const makeVao = (gl, bufsAndLocs) => {
+export const makeVao = (
+  gl,
+  bufsAndLocs,
+  integerMode = false,
+  size = 2
+) => {
   const vao = gl.createVertexArray()
   gl.bindVertexArray(vao)
   for (const [buf, loc] of bufsAndLocs) {
     gl.bindBuffer(gl.ARRAY_BUFFER, buf)
     gl.enableVertexAttribArray(loc)
-    gl.vertexAttribPointer(
+    integerMode ? gl.vertexAttribIPointer(
       loc,
-      2,
+      size,
+      gl.INT,
+      false,
+      0,
+      0,
+    ) : gl.vertexAttribPointer(
+      loc,
+      size,
       gl.FLOAT,
       false,
       0,
