@@ -64,7 +64,7 @@ export const particles = async (canvas) => {
   // texture index tracker to pass into vs
   const indices = new Int32Array(Array.from({ length: nParticles }, (_, i) => i))
   const indicesBuf = makeBuffer(gl, indices)
-  const indicesVao = makeVao(gl, [
+  makeVao(gl, [
     [indicesBuf, movementProgramLocs.pointIndex],
   ], true)
 
