@@ -30,6 +30,8 @@ export const particles = async (canvas) => {
     pointIndex: gl.getAttribLocation(movementProgram, 'pointIndex'),
     deltaTime: gl.getUniformLocation(movementProgram, 'deltaTime'),
     canvasDimensions: gl.getUniformLocation(movementProgram, 'canvasDimensions'),
+    pointsTex: gl.getUniformLocation(movementProgram, 'pointsTex'),
+    texLength: gl.getUniformLocation(movementProgram, 'texLength'),
   }
 
   const renderProgramLocs = {
