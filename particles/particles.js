@@ -103,8 +103,10 @@ export const particles = async (canvas) => {
     // update to new positions
     gl.useProgram(movementProgram)
     gl.bindVertexArray(curr.points)
-    gl.uniform2f(movementProgramLocs.canvasDimensions, gl.canvas.width, gl.canvas.height)
     gl.uniform1f(movementProgramLocs.deltaTime, deltaTime)
+    gl.uniform2f(movementProgramLocs.canvasDimensions, gl.canvas.width, gl.canvas.height)
+    gl.uniform1i(movementProgramLocs.pointsTex, 0)
+    gl.uniform1f(movementProgramLocs.texLength, points.length)
 
     // stop drawing on screen before executing tf
     gl.enable(gl.RASTERIZER_DISCARD)
